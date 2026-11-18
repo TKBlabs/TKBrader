@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKBrader — TKB Labs</title>
+<meta name="description" content="TKBraderは、気象庁の雨雲レーダー・予測・台風・落雷と天気予報を1画面にまとめたApple Silicon向けmacOSアプリです。">
+<link rel="canonical" href="https://apps.tkbtk.com/TKBrader/">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://apps.tkbtk.com/TKBrader/">
+<meta property="og:site_name" content="TKB Labs">
+<meta property="og:title" content="TKBrader — TKB Labs">
+<meta property="og:description" content="手元の詳しい地図と日本全体の広域地図を並べて、雨雲の実況と15時間先までの予測、台風、落雷、天気予報を1画面で。">
+<meta property="og:image" content="https://apps.tkbtk.com/assets/screenshots/tkbrader.jpg">
+<meta property="og:image:width" content="2000">
+<meta property="og:image:height" content="1102">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TKBrader — TKB Labs">
+<meta name="twitter:description" content="手元の詳しい地図と日本全体の広域地図を並べて、雨雲の実況と15時間先までの予測、台風、落雷、天気予報を1画面で。">
+<meta name="twitter:image" content="https://apps.tkbtk.com/assets/screenshots/tkbrader.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "TKBrader",
+  "url": "https://apps.tkbtk.com/TKBrader/",
+  "description": "TKBraderは、気象庁の雨雲レーダー・予測・台風・落雷と天気予報を1画面にまとめたApple Silicon向けmacOSアプリです。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "macOS Tahoe 26以降",
+  "softwareVersion": "1.0.2",
+  "downloadUrl": "https://github.com/TKBlabs/TKBrader/releases",
+  "image": "https://apps.tkbtk.com/assets/icons/tkbrader.png",
+  "author": { "@type": "Organization", "name": "TKB Labs", "url": "https://tkbtk.com/" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
+}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2T42LFKKTJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2T42LFKKTJ');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@400;500;600;700&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700;900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=267b1ce4">
+<style>
+/* =========================================================
+   TKB Labs — shared design system
+   Motif: real macOS window chrome (traffic lights / titlebars)
+   as the one signature element, reused everywhere.
+   ========================================================= */
+
+:root{
+  /* --- color tokens --- */
+  --bg:        #16171b;
+  --bg-alt:    #1b1d22;
+  --surface:   #212328;
+  --surface-2: #26282e;
+  --titlebar:  #2b2d33;
+  --border:    #34363d;
+  --border-soft: #2a2c32;
+
+  --text:       #e9e7e2;
+  --text-dim:   #999da7;
+  --text-faint: #64676f;
+
+  /* app / accent identity colors (drawn from a syntax-highlight palette) */
+  --amber: #f0c05a;   /* TKBshot  — capture / flash   */
+  --teal:  #5fd3c4;   /* TKBcal   — calendar / type    */
+  --pink:  #ff6f9c;   /* TKButil  — keyword / utility  */
+  --blue:  #7bb0ff;   /* TKBplorer / links             */
+  --sky:   #4fb6ff;   /* TKBrader — rain radar         */
+
+  --ok:    #6fd08c;
+  --warn:  #f0c05a;
+  --fix:   #ff8a80;
+
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+
+  --shadow-window: 0 1px 0 rgba(255,255,255,0.03) inset, 0 20px 50px -20px rgba(0,0,0,0.6);
+
+  --font-display: 'M PLUS 1 Code', 'JetBrains Mono', monospace;
+  --font-body: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+h1.headline{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  max-width: 16ch;
+}
+
+.hero-sub{
+  margin-top: 24px;
+  max-width: 46ch;
+  color: var(--text-dim);
+  font-size: 16.5px;
+}
+
+.app-hero-icon{
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: #14151a;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.app-hero-icon img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.download-note{
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(240,192,90,0.35);
+  border-radius: var(--radius-sm);
+  background: rgba(240,192,90,0.08);
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.download-note strong{ color: var(--text); }
+
+.screen-mock img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+}
+
+.explorer-mock{
+  width: 100%;
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 132px;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: #191a1f;
+}
+
+.explorer-sidebar,
+.explorer-files,
+.explorer-preview{
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #30323a;
+  border-radius: 8px;
+  background: #202228;
+}
+
+.explorer-line{
+  height: 8px;
+  margin-bottom: 11px;
+  border-radius: 4px;
+  background: #3a3d46;
+}
+
+.explorer-line.active{ background: var(--blue); opacity: .8; }
+
+.explorer-file{
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 9px 4px;
+  border-bottom: 1px solid #30323a;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.explorer-file::before{ content: "▰"; color: var(--blue); }
+
+.explorer-preview{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+@media (max-width: 640px){
+  .explorer-mock{ grid-template-columns: 72px minmax(0, 1fr); min-height: 250px; }
+  .explorer-preview{ display: none; }
+}
+
+/* final polish */
+body{
+  background:
+    radial-gradient(circle at 15% 4%, rgba(123,176,255,.08), transparent 28rem),
+    radial-gradient(circle at 88% 26%, rgba(123,176,255,.05), transparent 24rem),
+    var(--bg);
+}
+
+.menubar-brand, .btn{ -webkit-tap-highlight-color: transparent; }
+
+.feature{ transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+
+.feature:hover{ transform: translateY(-3px); border-color: #454851; background: var(--surface); }
+
+.btn-primary{ box-shadow: 0 10px 28px -14px var(--sky); }
+
+@media (max-width: 640px){
+  .wrap, .menubar-inner{ padding-left: 20px; padding-right: 20px; }
+  .menubar-nav{ gap: 14px; }
+  .menubar-nav a:not(.pill){ display: none; }
+  section{ padding: 52px 0; }
+  .section-head{ margin-bottom: 24px; }
+  .app-hero{ padding-bottom: 48px; }
+  .btn{ width: 100%; justify-content: center; }
+  .cta-row{ align-items: stretch !important; }
+  .spec-row{ gap: 18px; }
+  .spec-row span:last-child{ text-align: right; }
+}
+
+/* TKBrader — screenshot & notes */
+.shot{ display:block; padding: 0; }
+
+.shot img{ width: 100%; height: auto; display: block; }
+
+.btn[aria-disabled="true"]{ opacity: .55; cursor: default; pointer-events: none; }
+
+.source-list li{ color: var(--text-dim); font-size: 14px; padding: 10px 0; border-top: 1px solid var(--border-soft); }
+
+.source-list li:first-child{ border-top: none; padding-top: 0; }
+
+.source-list b{ color: var(--text); font-weight: 500; }
+
+.notice{
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid rgba(79,182,255,0.35);
+  border-radius: var(--radius-sm);
+  background: rgba(79,182,255,0.07);
+  color: var(--text-dim);
+  font-size: 13.5px;
+}
+
+.notice strong{ color: var(--text); }
+
+kbd{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  color: var(--text);
+}
+</style>
+</head>
+<body>
+
+  <header class="menubar">
+    <div class="menubar-inner">
+      <a href="https://tkbtk.com/" class="menubar-brand" style="text-decoration:none;">
+        <span class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></span>
+        TKB Labs
+      </a>
+      <nav class="menubar-nav" aria-label="メインナビゲーション">
+        <a href="../#apps">Apps</a>
+        <a href="#readme">README</a>
+        <a href="#" class="pill" data-email-link>Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <a href="../#apps" class="back-link" style="margin-top:28px;">← すべてのアプリ</a>
+
+    <section class="app-hero" style="padding-top:0; padding-bottom:40px; grid-template-columns:1fr;">
+      <div>
+        <div class="app-hero-icon"><img src="../assets/icons/tkbrader-192.webp" width="64" height="64" alt="TKBrader icon"></div>
+        <h1>TKBrader</h1>
+        <p class="tagline" style="max-width:56ch;">手元の詳しい地図と日本全体の地図を並べて、雨雲の実況と先の予測、台風、落雷、天気予報を1画面で見渡す雨雲レーダーアプリ。</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" style="background:var(--sky);" href="https://github.com/TKBlabs/TKBrader/releases">↓ ダウンロード</a>
+          <a class="btn btn-ghost" href="#readme">README を見る</a>
+        </div>
+        <p class="download-note"><strong>Appleの公証（Notarization）を受けています。</strong><br>DMGを開いてTKBrader.appを<code>/アプリケーション</code>へドラッグすれば、そのまま起動できます。</p>
+        <div class="spec-list">
+          <span><b>対応OS</b> macOS Tahoe 26以降</span>
+          <span><b>チップ</b> Apple Silicon</span>
+          <span><b>配布形式</b> DMG</span>
+        </div>
+      </div>
+
+    </section>
+
+    <a class="window shot" href="../assets/screenshots/tkbrader.jpg" target="_blank" rel="noopener" aria-label="TKBraderのスクリーンショットを拡大表示">
+        <div class="window-titlebar">
+          <span class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></span>
+          <span class="title">TKBrader</span>
+        </div>
+        <img src="../assets/screenshots/tkbrader-2000.webp" srcset="../assets/screenshots/tkbrader-1000.webp 1000w, ../assets/screenshots/tkbrader-2000.webp 2000w" sizes="(max-width: 1080px) 100vw, 1022px" width="2000" height="1102" alt="TKBraderの画面。上部に天気予報、下に関東の詳しい雨雲レーダーと日本全体の広域レーダーを左右に並べ、台風の進路と落雷を重ねている">
+      </a>
+
+    <section>
+      <div class="section-head">
+        <h2 class="section-title">概要</h2>
+        <span class="section-tag">// overview</span>
+      </div>
+      <div class="overview">
+        <div class="overview-text">
+          <p>
+            TKBraderは、気象庁の雨雲レーダーをMacの大きな画面で見るためのアプリです。
+            市街地まで読める詳しい地図と日本全体の広域地図を左右に並べ、「近くの雨がいつ来るか」と「全体の流れ」を同時に追えます。
+          </p>
+          <p>
+            雨雲は過去から再生することも、最新の観測を出し続けるライブ表示にすることもできます。
+            ライブ表示ではシークバーで先の予測に切り替えられ、1時間先までは5分刻み、その先は15時間先まで確認できます。
+          </p>
+          <p>
+            画面上部には現在の天気と1時間ごと・日ごとの天気予報を並べ、台風の進路と落雷も地図に重ねられます。
+          </p>
+        </div>
+        <div class="spec-card">
+          <h4>Specifications</h4>
+          <div class="spec-row"><span>対応OS</span><span>macOS Tahoe 26以降</span></div>
+          <div class="spec-row"><span>対応チップ</span><span>Apple Silicon</span></div>
+          <div class="spec-row"><span>言語</span><span>日本語</span></div>
+          <div class="spec-row"><span>対象地域</span><span>日本</span></div>
+          <div class="spec-row"><span>配布形式</span><span>DMG（公証済み）</span></div>
+          <div class="spec-row"><span>アップデート</span><span>アプリ内から自動</span></div>
+          <div class="spec-row"><span>ライセンス</span><span>Freeware</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2 class="section-title">主な機能</h2>
+        <span class="section-tag">// features</span>
+      </div>
+      <div class="feature-grid">
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">◫</div>
+          <h3>2画面の雨雲レーダー</h3>
+          <p>左に市街地まで読める詳しい地図、右に日本全体の広域地図。2つの地図は同じ時刻を指したまま動きます。</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">▶</div>
+          <h3>過去の再生とライブ</h3>
+          <p>過去3時間（最大12時間）の雨雲をアニメーションで再生。ライブでは最新の観測を自動で追い続けます。</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">⇥</div>
+          <h3>先の予測をシーク</h3>
+          <p>ライブ画面のシークバーで、1時間先までは5分刻み、その先は15時間先まで1時間刻みで予測を確認できます。</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">☀</div>
+          <h3>天気予報</h3>
+          <p>現在の天気、1時間ごとの予報、日ごとの予報を画面上部にまとめて表示します。取得元は Apple WeatherKit と Open-Meteo から選べます。</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">◎</div>
+          <h3>台風・落雷</h3>
+          <p>台風の現在位置・進路予想・予報円と、落雷（対地放電）の位置を地図に重ねて表示します。</p>
+        </div>
+        <div class="feature reveal">
+          <div class="feature-icon" style="background:var(--sky); color:#16171b;">⌖</div>
+          <h3>地点と距離の目安</h3>
+          <p>地名・郵便番号・現在地から地点を選べます。地点を中心に距離の円を描き、県境・県名も重ねられます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2 class="section-title">データについて</h2>
+        <span class="section-tag">// data sources</span>
+      </div>
+      <ul class="source-list">
+        <li><b>気象庁</b> — 高解像度降水ナウキャスト、解析雨量・降水短時間予報、台風情報、雷ナウキャスト。気象庁ホームページのデータを加工して表示しています（地図の縮尺に合わせたタイルの合成など）</li>
+        <li><b>Apple Weather</b>・<b>Open-Meteo.com</b> — 天気予報（設定で切り替え。Open-Meteo のデータは CC BY 4.0）</li>
+        <li><b>国土地理院 地球地図日本</b> — 都道府県境。線の間引きと変換をして作成しています</li>
+        <li><b>Apple マップ</b> — 背景の地図</li>
+      </ul>
+      <p class="notice">
+        <strong>予測は気象庁の発表をそのまま表示しています。</strong>アプリが独自に雨雲の動きを予測することはありません。
+        気象庁のデータの提供形式が変わった場合、予告なく表示できなくなることがあります。
+        避難や防災の判断には、気象庁や自治体が発表する情報を必ずご確認ください。
+      </p>
+    </section>
+
+    <section id="readme">
+      <div class="section-head">
+        <h2 class="section-title">README</h2>
+        <span class="section-tag">// cat README.md</span>
+      </div>
+      <div class="terminal">
+        <div class="window-titlebar">
+          <span class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></span>
+          <span class="title">README.md — TKBrader</span>
+        </div>
+        <div class="terminal-body">
+          <p><span class="prompt">$</span> cat <span class="path">README.md</span></p>
+
+          <h4># TKBrader</h4>
+          <pre>気象庁の雨雲レーダー・予測・台風・落雷と天気予報を1画面にまとめたmacOS用アプリです。</pre>
+
+          <h4>## インストール</h4>
+          <ul>
+            <li>DMGを開き、TKBrader.app を「アプリケーション」フォルダへドラッグします</li>
+            <li>Appleの公証（Notarization）済みのため、そのままダブルクリックで起動できます</li>
+            <li>現在地を使う場合は、初回に位置情報の利用を許可してください</li>
+          </ul>
+
+          <h4>## アップデート</h4>
+          <ul>
+            <li>24時間ごとに自動で更新を確認し、新しい版があればお知らせします</li>
+            <li>メニュー「TKBrader」→「アップデートを確認...」から手動でも確認できます</li>
+            <li>自動確認の有無は 設定（⌘,）→ 更新 で切り替えられます</li>
+          </ul>
+
+          <h4>## 動作環境</h4>
+          <ul>
+            <li>macOS Tahoe 26以降</li>
+            <li>Apple Silicon 搭載Mac（Intel Mac非対応）</li>
+            <li>インターネット接続（雨雲・天気のデータを随時取得します）</li>
+          </ul>
+
+          <h4>## 使い方</h4>
+          <ul>
+            <li>ツールバーで「再生」と「ライブ」を切り替えます</li>
+            <li>再生：シークバーで過去から予測までの好きな時刻に移動できます</li>
+            <li>ライブ：シークバーで最新の観測から先の予測に切り替えられます</li>
+            <li>キーボード：← / → で1コマずつ、0・↑・↓ で最新の観測へ戻ります</li>
+            <li>地点はツールバーの地点名から、地名・郵便番号・現在地で選べます</li>
+          </ul>
+
+          <h4>## 主な機能</h4>
+          <ul>
+            <li>詳しい地図と広域地図の2画面レーダー（時刻は常に同期）</li>
+            <li>過去の再生、ライブ表示、15時間先までの予測</li>
+            <li>現在の天気、1時間ごと・日ごとの天気予報</li>
+            <li>台風の進路・予報円、落雷、都道府県境、距離の目安の円</li>
+          </ul>
+
+          <h4>## データの出典</h4>
+          <pre>気象庁ホームページ（高解像度降水ナウキャスト／解析雨量・降水短時間予報／台風情報／雷ナウキャスト）を加工して作成
+Apple Weather
+Open-Meteo.com (CC BY 4.0)
+国土地理院 地球地図日本を加工して作成（都道府県境）</pre>
+
+          <h4>## ライセンス</h4>
+          <pre>Freeware — 個人・商用問わず無料でご利用いただけます。</pre>
+
+          <h4>## 詳細ドキュメント</h4>
+          <pre>各機能の詳細な説明はこちら：
+<a href="https://github.com/TKBlabs/TKBrader#readme" target="_blank" rel="noopener" class="path">https://github.com/TKBlabs/TKBrader</a></pre>
+
+          <h4>## フィードバック</h4>
+          <pre>不具合報告・機能要望は、ページ上部の「Contact」からお送りください。
+個人開発のため、すべてのご連絡への返信や、いただいた要望の実装を保証するものではありません。</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© 2026 TKB Labs — built on macOS, for macOS.</span>
+      <div class="footer-links">
+        <a href="../#apps">Apps</a>
+        <a href="#" data-email-link>Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../contact.js"></script>
+  <script>
+// Minimal scroll-reveal — no libraries, respects reduced motion.
+(function () {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = document.querySelectorAll('.reveal');
+
+  if (prefersReduced || !('IntersectionObserver' in window)) {
+    targets.forEach((el) => el.classList.add('in'));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  targets.forEach((el) => io.observe(el));
+})();
+
+  </script>
+</body>
+</html>
